@@ -39,7 +39,7 @@ I do feel relatively new to using R, so I'm sure there will be a steep learning 
 
 Go over Tasks 1.1. through 1.6 on Course Setup page. Provide a link below to your forked course repository in GitHub. Make sure you have pulled all recent changes from the course repository and that you have updated your course README file, committed those changes, and pushed them to your GitHub account. 
 
-> Answer: 
+> Answer: https://github.com/euk003/EDE_R_Lab_F26
 
 ## 3) Knitting
 When you have completed this document, click the `knit` button.This should produce a PDF copy of your markdown document. Submit this PDF to Canvas 
