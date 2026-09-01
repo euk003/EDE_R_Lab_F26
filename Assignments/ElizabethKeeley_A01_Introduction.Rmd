@@ -1,6 +1,6 @@
 ---
 title: "Assignment 1: Introduction to Data Exploration"
-author: "Student Name"
+author: "Elizabeth Keeley"
 output: pdf_document
 ---
 
@@ -22,16 +22,18 @@ Enter answers to the questions just below the >Answer: prompt.
 
 1. What are your previous experiences with data analytics, R, and Git? Include both formal and informal training.
 
-> Answer: 
+> Answer:
+I took a statistics course in college where I learned some R, however I didn't use R again until last semester when I took Applied Statistics with Professor Noss. That was my second exposure to R. 
 
 2. Are there any components of the course about which you feel confident?
 
 > Answer: 
+I enjoy troubleshooting code-- it feels like a puzzle!
 
 3. Are there any components of the course about which you feel apprehensive?
 
 > Answer: 
-
+I do feel relatively new to using R, so I'm sure there will be a steep learning curve at times. 
 
 ## 2) GitHub
 
