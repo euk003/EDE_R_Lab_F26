@@ -34,15 +34,17 @@ Add comments below that specify what kind of vectors are created. (First answer 
 
 ```{r Creating vectors}
 # Vectors ----
-vector1 <- c(1,2,5.3,6,-2,4) # Vector type: Numeric
+vector1 <- c(1,2,5.3,6,-2,4) # Vector type: Numeric ; the lower case c is creating column vectors
 vector1
 class(vector1)
 
-vector2 <- c("one","two","three") # Vector type: 
+vector2 <- c("one","two","three") # Vector type: Character
 vector2
+class(vector2)
 
-vector3 <- c(TRUE,TRUE,TRUE,FALSE,TRUE,FALSE) # Vector type:
+vector3 <- c(TRUE,TRUE,TRUE,FALSE,TRUE,FALSE) # Vector type: Logical
 vector3
+class(vector3)
 ```
 
 ### Vector Operations
@@ -52,25 +54,25 @@ Add comments below to indicate what each operation does.(First answer is provide
 # Returns the 3rd item in the vector
 vector1[3]
 
-#
+# Returns the max value in the vector
 max(vector1)
 
 #Create another vector of the values 10 thru 15
 vector4 <- c(10:15)
 
-#
+# Adds vector4 values to the end of vector1
 c(vector1, vector4)
 
-#
+# Multiplies the elements in vector1 by the elements in vector 4
 vector1 * vector4
 
-#
+# Multiplies each element in vector1 by 10
 vector1 * 10
 
-#
+# Makes the characters all upper case
 toupper(vector2) 
 
-#
+# Returns the opposite of the logical expression in vector3
 !vector3
 
 ```
@@ -82,17 +84,19 @@ Find a 5-day forecast of temperatures (Fahrenheit) for Durham, North Carolina. C
 ```{r Vector Exercise}
 
 #Assign to the variable 'temps_F' a vector of high temperatures in F
-
+temps_F <- c(97, 98, 94, 83, 83)
+temps_F
 
 #What is the average of these temperatures 
-
+avg <- mean(temps_F) #91
 
 #Compute the difference between each temperature and the average calculated above
-
+diff <- temps_F-avg
+diff 
 
 #Subtract 32 and multiply by 5/9ths to create a vector in Celsius
-
-
+temps_C <- (temps_F-32) * (5/9)
+temps_C # 36.11111 36.66667 34.44444 28.33333 28.33333
 ```
 
 ## Matrices
@@ -100,13 +104,13 @@ Find a 5-day forecast of temperatures (Fahrenheit) for Durham, North Carolina. C
 Complete the comments below:
 ```{r Creating Matrices}
 # Matrices ----
-matrix1 <- matrix(1:20, nrow = 5,ncol = 4) # 
+matrix1 <- matrix(1:20, nrow = 5,ncol = 4) # sets up the matrix by column as default
 matrix1
-#matrix1 has __ rows and __ columns
+#matrix1 has _5_ rows and _4_ columns
 
-matrix2 <- matrix(1:20, nrow = 5, ncol = 4, byrow = TRUE) #
+matrix2 <- matrix(1:20, nrow = 5, ncol = 4, byrow = TRUE) # populates the matrix by row instead
 matrix2
-#matrix2 has __ rows and __ columns
+#matrix2 has _5_ rows and _4_ columns
 
 matrix3 <- matrix(
   data = 1:20, 
@@ -118,24 +122,24 @@ matrix3 <- matrix(
     c("un", "deux", "trois", "quatre")
     )
   ) 
-
+matrix3
 ```
 
 ### Matrix Operations
 Add comments in the code chunk below to indicate type of vectors created and what each operation does.
 ```{r Matrix Operations}
 
-matrix1[4, 1] #
+matrix1[4, 1] # returns the value in row 4 and column 1
 
-matrix1[4,  ] #
+matrix1[4,  ] # returns the values in row 4
 
-matrix1[ , 3] #
+matrix1[ , 3] # returns the values in column 3
 
 matrix1[c(12, 14)] #
 
 matrix1[c(12:14)] #
 
-matrix1[2:4, 1:3] #
+matrix1[2:4, 1:3] # what does this do??
 
 #Create a vector of 6 values
 values = c(1, 26, 24, 68, 3, 44)
@@ -162,7 +166,7 @@ matrix4['R2','C1']
 ### Exercise 1b: Matrices
 Compute the mean of column "C2" in matrix4. (Should be 14.5)
 ```{r Matrix Exercise}
-
+mean(matrix4[,2])
 ```
 
 
@@ -171,7 +175,7 @@ Compute the mean of column "C2" in matrix4. (Should be 14.5)
 ### Creating Lists
 ```{r Creating Lists}
 # Lists ---- 
-# Creating Lists
+# Creating Lists # don't need to worry about dimensions or data types when working with lists
 list1 <- list(
   name = "Maria", 
   mynumbers = vector1, 
@@ -209,15 +213,15 @@ list1[[4]] = 44
 ```{r Creating data frames}
 # Data Frames ----
 #Create three vectors of equal length
-d <- c(1, 2, 3, 4) # What type of vector?
-e <- c("red", "white", "red", NA) # What type of vector?
-f <- c(TRUE, TRUE, TRUE, FALSE) # What type of vector?
+d <- c(1, 2, 3, 4) # What type of vector? numeric
+e <- c("red", "white", "red", NA) # What type of vector? character
+f <- c(TRUE, TRUE, TRUE, FALSE) # What type of vector? logical
 
-#Combine the vectors into a dataframe
+#Combine the vectors into a dataframe. they need to have the same length in order to be combined. 
 dataframe1 <- data.frame(d,e,f) 
 
 #Set the column names & View
-names(dataframe1) <- c("ID","Color","Passed"); View(dataframe1) # 
+names(dataframe1) <- c("ID","Color","Passed"); View(dataframe1) #view(dataframe1) tells R to pop up the dataframe. it won't knit with this though. 
 
 #Add a new column to the dataframe
 dataframe1$month <- c('Jan','Feb', 'Mar', 'Apr')
@@ -240,10 +244,10 @@ dataframe1[1:2,]
 dataframe1[,1]
 
 #Extract a column/columns from their name
-out1 <- dataframe1['Color']; class(out1)
+out1 <- dataframe1['Color']; class(out1) # when you extract a column from a data frame like this, the output is also a dataframe
 
-out2 <- dataframe1$Color; class(out2)
+out2 <- dataframe1$Color; class(out2) #when you extraxt like this, the output is a vector
 
-out3 <- dataframe1[c("ID","Passed")]; class(out3)
+out3 <- dataframe1[c("ID","Passed")]; class(out3) #this extracts as a dataframe
 
 ```
