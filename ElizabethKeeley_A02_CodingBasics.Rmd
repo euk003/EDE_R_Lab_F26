@@ -1,7 +1,9 @@
 ---
 title: "Assignment 2: Coding Basics"
 author: "Elizabeth Keeley"
-output: pdf_document
+output: 
+  pdf_document: 
+    toc: true
 geometry: margin=2.54cm
 editor_options: 
   chunk_output_type: console
@@ -26,7 +28,7 @@ This exercise accompanies the lessons/labs in Environmental Data Explorations on
 
 Set the following R code chunk so that it runs when knit, but no messages, errors, or any output is shown. The code itself, however, should be displayed.
 
-```{r project.setup}
+```{r project.setup, message=FALSE, warning=FALSE}
 #Import libraries
 library(tidyverse)
 library(knitr)
@@ -44,14 +46,15 @@ library(knitr)
 4.  Insert comments in your code to describe what you are doing.
 
 ```{r basics 1}
-#1. 
-fives <- c(1:55)
+#1. Create a vector called fives of numbers from 1 to 55, increasing by five. 
+fives <- seq(from=1,to=55,by=5)
 
-#2. 
-if (mean(fives) > median(fives)) then returnValue()
+#2. Calculate the mean and the median of the vector fives
+mean(fives)
+median(fives)
 
-#3. 
-
+#3. Ask R to determine whether the mean of fives is greater than the median of fives
+mean(fives) > median(fives)
 ```
 
 ## Coding Basics - Part 3
@@ -65,13 +68,26 @@ if (mean(fives) > median(fives)) then returnValue()
 8.  Label the columns of your data frame with informative titles.
 
 ```{r basics 2}
+# create a vector of student names
+names <- c("Lizzie", "Charlotte", "Tamara", "James") #vector type: character
 
+# create a vector of student test scores
+scores <- c(97,100,99,98) # vector type: numeric
+
+# create a vector of scholarship status
+schol_status <- c(TRUE, TRUE, FALSE, FALSE) # vector type: logical
+
+# combine above vectors into a data frame
+student_data <- data.frame(names, scores, schol_status)
+
+# add names to the data frame columns
+names(student_data) <- c("Student Name","Test Score","Scholarship Status")
 
 ```
 
 9.  QUESTION: How is this data frame different from a matrix?
 
-> Answer:
+> Answer: This data frame contains multipe types of elements, where a matrix contains all the same type of element. This data frame has numeric, character, and logical elements.
 
 10. Create a function with one input. In this function, use `if`...`else` to evaluate the value of the input: if it is greater than 50, print the word "Pass"; otherwise print the word "Fail".
 
@@ -83,21 +99,30 @@ if (mean(fives) > median(fives)) then returnValue()
 
 ```{r basics 3}
 #10. Create a function using if...else
+eval_50 <- function(x) {
+  if (x > 50) {"Pass"}
+  else  {"Fail"}}
 
 #11. Create a function using ifelse()
+eval_50_method2 <- function(x) {
+  ifelse(x>50,"Pass","Fail")}
 
 #12a. Run the first function with the value 52.5
+eval_50(52.5)
 
 #12b. Run the second function with the value 52.5
+eval_50_method2(52.5)
 
 #13a. Run the first function with the vector of test scores
+# eval_50(scores)
 
 #13b. Run the second function with the vector of test scores
+eval_50_method2(scores)
 ```
 
 14. QUESTION: Which option of `if`...`else` vs. `ifelse` worked? Why? (Hint: search the web for "R vectorization")
 
-> Answer:
+> Answer: The function 'ifelse' worked. The first function 'if ... else' did not work properly because it cannot process multiple inputs at once. It was expecting a single value rather than a vector of multiple values, and so it was unable to work. 
 
 ## Crafting reports - Part 4
 
@@ -107,6 +132,6 @@ Add a table of contents to your document and knit to a PDF. Submit your PDF to C
 
 ### Github link
 
-> Answer:
+> Answer: https://github.com/euk003/EDE_R_Lab_F26
 
 **NOTE** Before knitting, you'll need to comment out the call to the function in Q13 that does not work. (A document can't knit if the code it contains causes an error!)
