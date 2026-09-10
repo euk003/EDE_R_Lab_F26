@@ -52,11 +52,11 @@ here()
 setwd(here())
 
 #Arguments in the `here()` command allow easy navigation within subfolders
-filename <- here('Data','Raw','USGS_Site02085000_Flow_Raw.csv')
+filename <- here('Data','Raw','USGS_Site02085000_Flow_raw.csv')
 print(filename)
 
 #Or
-filename <- here("Data/Raw/USGS_Site02085000_Flow_Raw.csv")
+filename <- here("Data/Raw/USGS_Site02085000_Flow_raw.csv")
 print(filename)
 
 #See whether the file exists
@@ -64,7 +64,7 @@ file.exists(filename)
 
 #A tidied read.csv command
 usgs_flow_data <- read.csv(
-  file = here('Data','Raw','USGS_Site02085000_Flow_Raw.csv')
+  file = here('Data','Raw','USGS_Site02085000_Flow_raw.csv')
 )
 
 #Create and print a list of all files in a folder using "dir" and "here"
@@ -82,7 +82,7 @@ print(filenames)
 
 # 1. Read the 'NTL-LTER_Lake_ChemistryPhysics_Raw.csv' into a dataframe
 NTL_data <- read.csv(
-  file=here('Data','Raw','NTL-LTER_Lake_ChemistryPhysics_Raw.csv')
+  file=here('Data','Raw','NTL-LTER_Lake_ChemistryPhysics_raw.csv')
   )
 
 # 2.Read in all CSV files starting with "EPAair_03" into a single dataframe
@@ -128,7 +128,7 @@ More info on lubridate [here][<https://cran.r-project.org/web/packages/lubridate
 library(lubridate)
 
 #Ex1
-str_today <- "2026-sep-10"
+str_today <- "2026-sep-10" # for using asdate function: %Y-b-%d
 #Since the format is year-month-day we will use function ymd()
 date_obj_today <- ymd(str_today)
 date_obj_today
@@ -167,7 +167,7 @@ fix.early.dates <- function(d, cutoff) {
        return(d)
 }
 
-fixed_date_obj_past <- fix.early.dates(date_obj_past,cutoff=24) 
+fixed_date_obj_past <- fix.early.dates(date_obj_past,cutoff=26) 
 #cutoff could be the current year to be more general or any other depending on data set 
 
 

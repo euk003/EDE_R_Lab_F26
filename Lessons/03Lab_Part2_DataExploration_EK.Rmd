@@ -23,20 +23,24 @@ plots → write it up.** You are diagnosing, not cleaning.
 
 ```{r setup, message = FALSE}
 # Load packages
-
+#install.packages('here')
+library(here) 
+library(tidyverse)
+library(lubridate)
 
 # Confirm the project root with here()
-
+here()
 
 # Import the raw PM2.5 file (project-relative path via here())
-pm25 <- read.csv(
+pm25 <- read.csv(here("Data/Raw/EPAair_PM25_NC2025_raw.csv"))
   #---- ENTER THE FILE PATH HERE, using here() ----
-)
+
 
 # Parse the date (you learned date parsing in the lesson; these dates are clean,
 # so it's a single line). First LOOK at a raw value: head(pm25$Date)
+head(pm25$Date)
 # EPA daily files are usually MM/DD/YYYY -> use mdy(). (day-first? use dmy())
-pm25$Date <- mdy(pm25$Date)
+pm25$Date <- mdy(pm25$Date) #this function mdy is in lubridate. all you need to know is the order the date is already in. 
 ```
 
 ---
@@ -46,7 +50,7 @@ pm25$Date <- mdy(pm25$Date)
 Briefly: where do these data come from, what does one row represent, and in what
 units is PM2.5 reported?
 
-> Answer:
+> Answer: 
 
 ---
 
@@ -54,13 +58,16 @@ units is PM2.5 reported?
 
 ```{r inspect}
 # glimpse the data; check dim() and names()
-
-
+dim(pm25)
+names(pm25)
+glimpse(pm25)
+head(pm25)
+tail(pm25)
 ```
 
 What stands out about the size, the columns, and the `Date` column?
 
-> Answer:
+> Answer: 10,184 rows and 22 columns. The Date column is organized by the earliest sammples in the year at the top, all the way to the latest dates in the year at the bottom. 
 
 ---
 
@@ -71,7 +78,7 @@ Which columns are categorical (grouping) variables rather than measurements?
 ```{r categoricals}
 # Look at the unique values of the likely categorical columns
 # (e.g., Source, UNITS) and count the sites (Site.ID)
-
+count(unique(pm25$Site.ID))
 
 # If you'll group or plot by site, make Site.ID a factor explicitly:
 # pm25$Site.ID <- as.factor(pm25$Site.ID)
