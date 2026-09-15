@@ -53,16 +53,16 @@ Litter <- read.csv(here("Data/Raw/NEON_NIWO_Litter_massdata_2016-26_raw.csv"))
 
 2.  The neonicotinoid dataset was collected from the Environmental Protection Agency's ECOTOX Knowledgebase, a database for ecotoxicology research. Neonicotinoids are a class of insecticides used widely in agriculture. The dataset that has been pulled includes all studies published on insects. Why might we be interested in the ecotoxicology of neonicotinoids on insects? Feel free to do a brief internet search if you feel you need more background information.
 
-> Answer:
+> Answer: Given that neonicotinoids are used widely in agriculture, it is important to udnerstand their impact on the insects they are intended to target as well as their unintended impact on other insects. It is likely that insects not detrimental to agriculture are harmed and killed by neonicotinoids, and so it is important to understand the broader implications of their use.  
 
 3.  The Niwot Ridge litter and woody debris dataset was collected from the National Ecological Observatory Network, which collectively includes 81 aquatic and terrestrial sites across 20 ecoclimatic domains. 32 of these sites sample forest litter and woody debris, and we will focus on the Niwot Ridge long-term ecological research (LTER) station in Colorado. Why might we be interested in studying litter and woody debris that falls to the ground in forests? Feel free to do a brief internet search if you feel you need more background information.
 
-> Answer:
+> Answer: Litter and woody debris in forests is interesting for multiple reasons. Quantifying litter and woody debris, and the rate at which they decompose, can tell us something about carbon storage vs carbon release in those ecosystems. This data set appears to focus on dry mass, approximately 50% of which is typically carbon biomass. 
 
 4.  How is litter and woody debris sampled as part of the NEON network? Read the NEON_Litterfall_UserGuide.pdf document to learn more. List three pieces of salient information about the sampling methods here:
 
 > Answer: 
- 1.
+ 1. 
  2.
  3. 
 
