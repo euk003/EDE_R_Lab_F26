@@ -1,6 +1,6 @@
 ---
 title: "Assignment 3: Data Exploration"
-author: "Student Name"
+author: "Elizabeth Keeley"
 output: pdf_document
 geometry: margin=2.54cm
 editor_options: 
@@ -31,9 +31,22 @@ This exercise accompanies the lessons in Environmental Data Exploration M3: Data
 
 1.  Load necessary packages (tidyverse, lubridate, here), check your current working directory and upload two datasets: the ECOTOX neonicotinoid dataset (ECOTOX_Neonicotinoids_Insects_raw.csv) and the Niwot Ridge NEON dataset for litter and woody debris (NEON_NIWO_Litter_massdata_2016-26_raw.csv). Name these datasets "Neonics" and "Litter", respectively.
 
-```{r setup,  message = FALSE}
+```{r setup,  message = FALSE, warning = FALSE}
 
+#Import libraries
+library(tidyverse)
+library(lubridate)
+library(knitr)
+library(here)
 
+#Check current working directory
+here()
+
+# Upload ECOTOX neonicotinoid dataset
+Neonics <- read.csv(here("Data/Raw/ECOTOX_Neonicotinoids_Insects_raw.txt"), sep = '|')
+
+# Upload Niwot Ridge NEON dataset for litter and woody debris
+Litter <- read.csv(here("Data/Raw/NEON_NIWO_Litter_massdata_2016-26_raw.csv"))
 ```
 
 ## Learn about your system
@@ -58,14 +71,18 @@ This exercise accompanies the lessons in Environmental Data Exploration M3: Data
 5.  What are the dimensions of the dataset?
 
 ```{r Q5}
-
+# dimensions of Neonics
+dim(Neonics) # this dataset has 8748 rows and 76 columns 
 
 ```
 
 6.  Using the `summary` function on the "Effect" column, determine the most common effects that are studied. Why might these effects specifically be of interest? [Tip: The `sort()` command is useful for listing the values in order of magnitude...]
 
 ```{r Q6}
-
+# Use summary and sort to determine the most common effects studied
+summary(Neonics$Effect)
+sort(Neonics$Effect)
+summary(Neonics)
 
 ```
 
