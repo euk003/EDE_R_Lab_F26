@@ -62,9 +62,9 @@ Litter <- read.csv(here("Data/Raw/NEON_NIWO_Litter_massdata_2016-26_raw.csv"))
 4.  How is litter and woody debris sampled as part of the NEON network? Read the NEON_Litterfall_UserGuide.pdf document to learn more. List three pieces of salient information about the sampling methods here:
 
 > Answer: 
- 1. Both ground traps and elevated traps are used to collect litter and fine woody debris. 
- 2.
- 3. 
+ 1. Ground traps are used to collect fine woody debris whereas elevated traps are used to collect litter.
+ 2. Litter is material dropped from the forest canopy with an end diameter of less than 2cm and a length of less than 50cm. 
+ 3. Fine woody debris is material with an end diameter of less than 2cm but a length of greater than 50cm. 
 
 ## Obtain basic summaries of your data (Neonics)
 
@@ -80,31 +80,34 @@ dim(Neonics) # this dataset has 8748 rows and 76 columns
 
 ```{r Q6}
 # Use summary and sort to determine the most common effects studied
-summary(Neonics$Effect)
-sort(Neonics$Effect) 
-
+summary(factor(Neonics$Effect))
+sort(summary(factor(Neonics$Effect)), decreasing = TRUE) 
 ```
 
-> Answer: The most common effects are Accumulation, Avoidance, Behavior and Biochemistry.
+> Answer: The most common effects are Mortality, Population, Genetics, Behavior, and Feeding Behavior (in descending order). Mortality is of interest because it communicates both the effectiveness of the insecticide on target insecys, and the amount of death caused to other insect populations as a result. Population is 
 
 
 7.  Using the `summary` function, determine the six most commonly studied species in the dataset (common name). What do these species have in common, and why might they be of interest over other insects? Feel free to do a brief internet search for more information if needed.[TIP: Explore the help on the `summary()` function, in particular the `maxsum` argument...]
 
 ```{r Q7}
-summary(Neonics$X.Species.Common.Name, maxsum=6)
+# Use sort and summary to determine the most commonly studied species in the data set
+sort(summary(factor(Neonics$X.Species.Common.Name), maxsum= Inf), decreasing = TRUE)
 
 ```
 
-> Answer:
+> Answer: The six most commonly studied species in this dataset are Honey Bee, Carniolan Honey Bee, Parasitic Wasp, Bumble Bee, Italian Honeybee, and Asiatic Honey Bee. These species are all pollinators, and thus the impact of insecticides on them is important to understand given widespread concerns over a  decline in pollinator species impacting agriculture and other plant survival. 
 
 8.  Concentrations are always a numeric value. What is the class of `Conc.1.Mean..Author..` column in the dataset, and why is it not numeric? [Tip: Viewing the dataframe may be helpful...]
 
 ```{r Q8}
-
+# View Neonics data frame
+view(Neonics)
+# determine class for Conc.1.Mean..Author..
+class(Neonics$Conc.1.Type..Author..) # the class is character 
 
 ```
 
-> Answer:
+> Answer: The class for this data column is character. 
 
 ## Explore your data graphically (Neonics)
 
