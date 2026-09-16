@@ -62,7 +62,7 @@ Litter <- read.csv(here("Data/Raw/NEON_NIWO_Litter_massdata_2016-26_raw.csv"))
 4.  How is litter and woody debris sampled as part of the NEON network? Read the NEON_Litterfall_UserGuide.pdf document to learn more. List three pieces of salient information about the sampling methods here:
 
 > Answer: 
- 1. 
+ 1. Both ground traps and elevated traps are used to collect litter and fine woody debris. 
  2.
  3. 
 
@@ -81,18 +81,17 @@ dim(Neonics) # this dataset has 8748 rows and 76 columns
 ```{r Q6}
 # Use summary and sort to determine the most common effects studied
 summary(Neonics$Effect)
-sort(Neonics$Effect)
-summary(Neonics)
+sort(Neonics$Effect) 
 
 ```
 
-> Answer:
+> Answer: The most common effects are Accumulation, Avoidance, Behavior and Biochemistry.
 
 
 7.  Using the `summary` function, determine the six most commonly studied species in the dataset (common name). What do these species have in common, and why might they be of interest over other insects? Feel free to do a brief internet search for more information if needed.[TIP: Explore the help on the `summary()` function, in particular the `maxsum` argument...]
 
 ```{r Q7}
-
+summary(Neonics$X.Species.Common.Name, maxsum=6)
 
 ```
 
