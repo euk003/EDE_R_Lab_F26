@@ -85,7 +85,7 @@ summary(factor(Neonics$Effect))
 sort(summary(factor(Neonics$Effect)), decreasing = TRUE) 
 ```
 
-> Answer: The most common effects are Mortality, Population, Genetics, Behavior, and Feeding Behavior (in descending order). Mortality is of interest because it communicates both the effectiveness of the insecticide on target insecys, and the amount of death caused to other insect populations as a result. Population is 
+> Answer: The most common effects are Mortality, Population, Genetics, Behavior, and Feeding Behavior (in descending order). Mortality is of interest because it communicates both the effectiveness of the insecticide on target insects, and the amount of death caused to other insect populations as a result. Population tells us the number of individuals present at the time sampled, which is helpful to know if areas are sampled repeatedly over time. Genetics covers evidence of genetic impacts associated with the insecticides, which is an important effect to understand as it can have broad-reaching impacts on insect survival and reproduction. 
 
 
 7.  Using the `summary` function, determine the six most commonly studied species in the dataset (common name). What do these species have in common, and why might they be of interest over other insects? Feel free to do a brief internet search for more information if needed.[TIP: Explore the help on the `summary()` function, in particular the `maxsum` argument...]
@@ -172,24 +172,23 @@ summary(factor(Litter$plotID))
 ggplot(Litter, aes(x = functionalGroup)) +
   geom_bar()
 
-
 ```
 
 What type(s) of litter tend to have the highest biomass at these sites?
 
 ```{r, fig.height = 6, fig.width = 6, warning = FALSE}
-# Use geom_bar() to visualize biomass
+# Use geom_boxplot() to visualize biomass
 ggplot(Litter, aes(x = functionalGroup, y = dryMass)) +
   geom_boxplot()
 
 ```
 
-> Answer: It looks like Needles tend to have the highest biomass at these sites. 
+> Answer: It looks like Needles tend to have the highest biomass at these sites. There is one outlier entry for Twigs/branches that is very high, but in general Needles have the highest biomass. 
 
 13. Write a short data-exploration summary for Neonics.
 
 > - **One key characteristic:** 
-> - **One data-quality issue:** 
+> - **One data-quality issue:** There are forward slashes following the concentration numbers in 'X.Conc.1.Mean..Author..'.
 > - **One interesting pattern:** 
 > - **One question for further analysis:** 
 
