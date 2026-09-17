@@ -38,6 +38,7 @@ library(tidyverse)
 library(lubridate)
 library(knitr)
 library(here)
+library(ggplot2)
 
 #Check current working directory
 here()
@@ -91,7 +92,7 @@ sort(summary(factor(Neonics$Effect)), decreasing = TRUE)
 
 ```{r Q7}
 # Use sort and summary to determine the most commonly studied species in the data set
-sort(summary(factor(Neonics$X.Species.Common.Name), maxsum= Inf), decreasing = TRUE)
+sort(summary(factor(Neonics$X.Species.Common.Name), maxsum= 7), decreasing = TRUE)
 
 ```
 
@@ -104,10 +105,16 @@ sort(summary(factor(Neonics$X.Species.Common.Name), maxsum= Inf), decreasing = T
 view(Neonics)
 # determine class for Conc.1.Mean..Author..
 class(Neonics$Conc.1.Type..Author..) # the class is character 
+# determine class for X.Conc.1.Mean..Author..
+class(Neonics$X.Conc.1.Mean..Author..) # the class is character
+
+glimpse(Neonics$X.Conc.1.Mean..Author..) # checking why class is character
+
+glimpse(Neonics$Conc.1.Type..Author..) # checking why class is character
 
 ```
 
-> Answer: The class for this data column is character. 
+> Answer: I didn't find a column titled 'Conc.1.Mean..Author..' so I looked at 'Conc.1.Type..Author..' and 'X.Conc.1.Mean..Author..' The class for both data columns is character. 'X.Conc.1.Mean..Author..' has forward slashes in many of the rows, which makes the class type character rather than numeric. 'Conc.1.Type..Author..' is all text.
 
 ## Explore your data graphically (Neonics)
 
@@ -115,42 +122,69 @@ class(Neonics$Conc.1.Type..Author..) # the class is character
 
 [**TIP**: Add `theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))` to the end of your plot command to rotate and align the X-axis labels...]
 
-```{r Q11}
-
+```{r Q11, fig.height = 3, fig.width = 6, warning = FALSE}
+# Use geom_bar() to visualize which Endpoints are the most common. 
+ggplot(Neonics, aes(x = Endpoint.)) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))+
+  geom_bar()
 
 ```
 
-> Answer:
+> Answer: Endpoints LOEL and NOEL are the two most common. LOEL is the lowest concentration of neonicotinoid that produces a significantly different effect than the control group. NOEL is the highest concentration of neonicotinoid that does not produce a significantly different effect than the control group. 
 
 ## Explore your data (Litter)
 
 10. Determine the class of collectDate. Is it a date? If not, change to a date and confirm the new class of the variable. Using the `unique` function, determine which dates litter was sampled in August 2018.
 
 ```{r Q12}
+# determine class of collectDate
+class(Litter$collectDate) # class is currently character
+# look at how date is formatted
+head(Litter$collectDate) # its in year-month-date
+# change to date format
+Litter$collectDate <- ymd(Litter$collectDate)
+# check class again to make sure it's in date format
+class(Litter$collectDate) # it is!
 
+# use unique to determine which dates data was collected on in 2018
+unique(Litter$collectDate[year(Litter$collectDate)==2018])
 
 ```
 
 11. Using the `unique` function, list the different plotIDs sampled at Niwot Ridge. How is the information obtained from `unique` different from that obtained from `summary`?
 
 ```{r Q13}
+# use unique to list the different plotIDs from Niwot Ridge
+unique(Litter$plotID)
 
-
+# use summary to compare this function's output to unique's output
+summary(Litter$plotID)
+summary(factor(Litter$plotID))
 ```
 
-> Answer:
+> Answer: Unique returns the contents of each unique plotID entry. Summary returns the number of rows in that column, as well as the class type and mode type. Summary, when combined with factor, returns the number of entries for each plotID type. 
 
 12. Create a bar graph of functionalGroup counts. This shows you what type of litter is collected at the Niwot Ridge sites. Notice that litter types are fairly equally distributed across the Niwot Ridge sites.
 
-```{r Q14}
+```{r Q14, fig.height = 3, fig.width = 6, warning = FALSE}
+
+# Use geom_bar() to visualize which functionalGroup counts. 
+ggplot(Litter, aes(x = functionalGroup)) +
+  geom_bar()
 
 
 ```
 
-
 What type(s) of litter tend to have the highest biomass at these sites?
 
-> Answer:
+```{r, fig.height = 6, fig.width = 6, warning = FALSE}
+# Use geom_bar() to visualize biomass
+ggplot(Litter, aes(x = functionalGroup, y = dryMass)) +
+  geom_boxplot()
+
+```
+
+> Answer: It looks like Needles tend to have the highest biomass at these sites. 
 
 13. Write a short data-exploration summary for Neonics.
 
