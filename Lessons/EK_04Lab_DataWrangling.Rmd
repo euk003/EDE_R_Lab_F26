@@ -47,11 +47,11 @@ Filtering allows us to choose certain rows (observations) in our dataset.
    
 ```{r filter data}
 # note the data types of these two columns
-class(NTL.phys.data$lakeid)
-class(NTL.phys.data$depth)
+class(NTL.phys.data$lakeid) #character
+class(NTL.phys.data$depth) #numeric
 
 # dplyr filtering 
-NTL.phys.data.surface <- filter(NTL.phys.data, depth == 0) 
+NTL.phys.data.surface <- filter(NTL.phys.data, depth == 0) # filter function from dplyr. filter condition is numeric because the class is numeric
 
 # Choose multiple conditions to filter
 summary(NTL.phys.data$lakename)
@@ -68,12 +68,16 @@ NTL.phys.data.JunethruOctober <- filter(NTL.phys.data, daynum %in% c(152:304))
 # Exercise 1: 
 # filter NTL.phys.data for the year 1999
 # what code do you need to use, based on the class of the variable?
-
+class(NTL.phys.data$year4)
+Ex1 <- filter(NTL.phys.data, year4 == 1999)
 
 # Exercise 2: 
 # filter NTL.phys.data for Tuesday Lake from 1990 through 1999.
-
-
+class(NTL.phys.data$lakename)
+Ex2 <- filter(NTL.phys.data, 
+              lakename == "Tuesday Lake",
+              year4 >= 1990, 
+              year4 <= 1999)
 ```
 
 Question: Why don't we filter using row numbers?
@@ -93,20 +97,26 @@ Let's say we want to take our raw dataset (NTL.phys.data), *then* filter the dat
 #Example using pipes to wrangle data: 
 #Add pipes in the correct place below
 NTL.phys.data.processed <- 
-  NTL.phys.data
-  filter(lakename == "Paul Lake" | lakename == "Peter Lake") 
-  select(lakename, sampledate:temperature_C) 
+  NTL.phys.data %>%
+  filter(lakename == "Paul Lake" | lakename == "Peter Lake") %>% 
+  select(lakename, sampledate:temperature_C) %>% 
   mutate(temperature_F = (temperature_C*9/5) + 32)
 
 #Exercise 3: Using a pipe filter NTL.phys.data for Tuesday Lake from 1990 
 # through 1999 and observations collected during July. 
-
+Ex3 <-
+  NTL.phys.data %>% 
+  filter (lakename == "Tuesday Lake") %>% 
+  filter(year4 >= 1990, year4 <= 1999) %>% 
+  filter(month(sampledate)== 7)
   
-
 #Exercise 4: Using the data from part 3, a pipe, and the summarize() function, 
 # find the mean surface water temperature. 
 # (hint: in this dataset, surface measurements have depth == 0). 
-
+Ex4 <-
+  Ex3 %>% 
+  filter(depth == 0) %>% 
+  summarize(mean.surf.temp = mean(temperature_C))
   
 ```
 
@@ -116,6 +126,11 @@ Note: There is no difference between summarize() and summarise() in `dplyr`. The
 #Exercise 5: Using the NTL.phys.data.processed find the mean temperature for 
 #Peter and Paul lake separately.
 
+Ex5 <-
+  NTL.phys.data.processed %>%
+  filter(depth == 0) %>% 
+  group_by(lakename) %>% 
+  summarize(means = mean(temperature_C, na.rm = TRUE))
 
 ```
 
