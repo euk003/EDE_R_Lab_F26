@@ -190,11 +190,11 @@ ggplot(Litter, aes(x = functionalGroup, y = dryMass)) +
 > - **One key characteristic:** Honey Bee is the most commonly studied insect species in this dataset. 
 > - **One data-quality issue:** There are forward slashes following the concentration numbers in 'X.Conc.1.Mean..Author..'.
 > - **One interesting pattern:** Mortality is the most common effect studied in the Neonics data set. 
-> - **One question for further analysis:** 
+> - **One question for further analysis:** Which effect is the most common for Honey Bees in this data set? 
 
 14. Write a short data-exploration summary for Litter.
 
 > - **One key characteristic:** Needles seem to have the highest biomass at the sample sites in the Litter dataset. 
-> - **One data-quality issue:** 
+> - **One data-quality issue:** There are some zeros for dryMass because there was no sample to collect, not because the dry biomass is 0. 
 > - **One interesting pattern:** Litter types seem to be evenly distributed across sample sites. 
-> - **One question for further analysis:** 
+> - **One question for further analysis:** It's surprising to me that needles have higher biomass than twigs. How effective is the method of data collection (ground traps vs. elevated traps) at capturing all the litterfall of both types? 
