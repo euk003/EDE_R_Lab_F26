@@ -187,14 +187,14 @@ ggplot(Litter, aes(x = functionalGroup, y = dryMass)) +
 
 13. Write a short data-exploration summary for Neonics.
 
-> - **One key characteristic:** 
+> - **One key characteristic:** Honey Bee is the most commonly studied insect species in this dataset. 
 > - **One data-quality issue:** There are forward slashes following the concentration numbers in 'X.Conc.1.Mean..Author..'.
-> - **One interesting pattern:** 
+> - **One interesting pattern:** Mortality is the most common effect studied in the Neonics data set. 
 > - **One question for further analysis:** 
 
 14. Write a short data-exploration summary for Litter.
 
-> - **One key characteristic:** 
+> - **One key characteristic:** Needles seem to have the highest biomass at the sample sites in the Litter dataset. 
 > - **One data-quality issue:** 
-> - **One interesting pattern:** 
+> - **One interesting pattern:** Litter types seem to be evenly distributed across sample sites. 
 > - **One question for further analysis:** 
