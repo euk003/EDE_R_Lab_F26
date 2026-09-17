@@ -1,0 +1,8 @@
+*Combining datasets*
+
+inner_join, left_join, and full_join are hte most common joins you may use
+
+*Piped commands*
+
+- you can run portions of your pipe to keep track of what is doing what
+- enter the arguments in a different line
