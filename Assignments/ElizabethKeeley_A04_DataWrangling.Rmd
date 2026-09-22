@@ -51,19 +51,19 @@ PM25.25 <- read.csv(here("Data/Raw/EPAair_PM25_NC2025_raw.csv"))
 #2 
 # show dimensions of O3.24
 dim(O3.24) # 9519 rows and 21 columns
-glimpse(O3.24)
+# glimpse(O3.24)
 
 # show dimensions of O3.25
 dim(O3.25) # 9466 rows and 21 columns
-glimpse(O3.25)
+# glimpse(O3.25)
 
 # show dimensions of PM25.24
 dim(PM25.24) # 9752 rows and 22 columns
-glimpse(PM25.24)
+# glimpse(PM25.24)
 
 # show dimensions of PM25.25
 dim(PM25.25) # 10184 rows and 22 columns
-glimpse(PM25.25)
+# glimpse(PM25.25)
 ```
 
 > All four datasets should have the same number of columns (PM2.5 has one extra column),
@@ -189,7 +189,9 @@ daily.O3.PM25 <- O3.PM25.2425 %>%
   "West Johnston Co.", "Garinger High School", "Castle Hayne", 
   "Pitt Agri. Center", "Bryson City", "Millbrook School")) %>%
   group_by(Date, Local.Site.Name, AQS.Parameter.Description, County) %>% 
-  summarize(AQI.mean = mean(Daily.AQI.Value, na.rm = TRUE), lat.mean = mean(Site.Latitude, na.rm = TRUE), long.mean = mean(Site.Longitude, na.rm = TRUE)) %>%
+  summarize(AQI.mean = mean(Daily.AQI.Value, na.rm = TRUE),
+            lat.mean = mean(Site.Latitude, na.rm = TRUE), 
+            long.mean = mean(Site.Longitude, na.rm = TRUE)) %>%
   mutate(Month = month(Date), Year = year(Date))
 
 ```
@@ -246,7 +248,8 @@ missing. Mean PM2.5 may remain missing.
 # creating a monthly summary data frame 
 monthly.O3.PM25 <- daily.O3.PM25 %>% 
   group_by(Local.Site.Name, Month, Year) %>% 
-  summarize(O3.mean = mean(Ozone, na.rm = TRUE), PM25.mean = mean(PM2.5, na.rm = TRUE)) %>% 
+  summarize(O3.mean = mean(Ozone, na.rm = TRUE), 
+            PM25.mean = mean(PM2.5, na.rm = TRUE)) %>% 
   drop_na(O3.mean)
 
 #13
@@ -264,7 +267,8 @@ both approaches and compare the dimensions of the resulting summary data frames.
 # testing na.omit() to answer question 14
 monthly2.O3.PM25 <- daily.O3.PM25 %>% 
   group_by(Local.Site.Name, Month, Year) %>% 
-  summarize(O3.mean = mean(Ozone, na.rm = TRUE), PM25.mean = mean(PM2.5, na.rm = TRUE)) %>% 
+  summarize(O3.mean = mean(Ozone, na.rm = TRUE), 
+            PM25.mean = mean(PM2.5, na.rm = TRUE)) %>% 
   na.omit(O3.mean)
 
 dim(monthly2.O3.PM25) # 234 rows and 5 columns 
