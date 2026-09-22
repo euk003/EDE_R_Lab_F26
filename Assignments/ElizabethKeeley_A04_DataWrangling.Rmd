@@ -1,6 +1,6 @@
 ---
 title: "Assignment 4: Data Wrangling"
-author: "Student Name"
+author: "Elizabeth Keeley"
 output: pdf_document
 geometry: margin=2.54cm
 ---
@@ -35,22 +35,40 @@ file for information about the variables and measurements.
 2. Add the appropriate code to reveal the dimensions of the four datasets. 
 
 ```{r setup questions 1-2, message = FALSE}
-#1a 
-
+#1a load required packages
+library(tidyverse)
+library(here)
 
 #1b 
-
+here() # my working directory is my git repository
 
 #1c 
-
+O3.24 <- read.csv(here("Data/Raw/EPAair_O3_NC2024_raw.csv"))
+O3.25 <- read.csv(here("Data/Raw/EPAair_O3_NC2025_raw.csv"))
+PM25.24 <- read.csv(here("Data/Raw/EPAair_PM25_NC2024_raw.csv"))
+PM25.25 <- read.csv(here("Data/Raw/EPAair_PM25_NC2025_raw.csv"))
 
 #2 
+# show dimensions of O3.24
+dim(O3.24) # 9519 rows and 21 columns
+glimpse(O3.24)
 
+# show dimensions of O3.25
+dim(O3.25) # 9466 rows and 21 columns
+glimpse(O3.25)
 
+# show dimensions of PM25.24
+dim(PM25.24) # 9752 rows and 22 columns
+glimpse(PM25.24)
+
+# show dimensions of PM25.25
+dim(PM25.25) # 10184 rows and 22 columns
+glimpse(PM25.25)
 ```
 
 > All four datasets should have the same number of columns (PM2.5 has one extra column),
 but unique record counts (rows). Do your datasets follow this pattern?
+> My datasets do follow this pattern. Both PM25 datsets have one more column than do the O3 datasets. 
 
 ## Wrangle individual datasets to create processed files.
 
@@ -66,7 +84,10 @@ AQS.Parameter.Description, County, Site.Latitude, Site.Longitude
 
 ```{r questions 3 thru 5}
 #3
-
+O3.24$Date <- mdy(O3.24$Date) # change O3.24 date column to a date object
+O3.25$Date <- mdy(O3.25$Date) # change O3.25 date column to a date object
+PM25.24$Date <- mdy(PM25.24$Date) # change PM25.24 date column to a date object
+PM25.25$Date <- mdy(PM25.25$Date) # # change PM25.25 date column to a date object
 
 #4
 
