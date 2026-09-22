@@ -90,10 +90,14 @@ PM25.24$Date <- mdy(PM25.24$Date) # change PM25.24 date column to a date object
 PM25.25$Date <- mdy(PM25.25$Date) # # change PM25.25 date column to a date object
 
 #4
-
+O3.24.filt <- select(O3.24, Date, Daily.AQI.Value, Local.Site.Name, AQS.Parameter.Description, County:Site.Longitude)
+O3.25.filt <- select(O3.25, Date, Daily.AQI.Value, Local.Site.Name, AQS.Parameter.Description, County:Site.Longitude)
+PM25.24.filt <- select(PM25.24, Date, Daily.AQI.Value, Local.Site.Name, AQS.Parameter.Description, County:Site.Longitude)
+PM25.25.filt <- select(PM25.25, Date, Daily.AQI.Value, Local.Site.Name, AQS.Parameter.Description, County:Site.Longitude)
 
 #5
-
+PM25.24.filt$AQS.Parameter.Description <- "PM2.5"
+PM25.25.filt$AQS.Parameter.Description <- "PM2.5"
 
 ```
 
@@ -102,8 +106,34 @@ PM25.25$Date <- mdy(PM25.25$Date) # # change PM25.25 date column to a date objec
 6. Save all four processed datasets in the Processed folder. Use the same file names as the raw files but replace "raw" with "processed".
 
 ```{r question 6}
-#6 
+#6 Save processed datasets 
+# O3.24
+write.csv(
+  O3.24.filt, 
+  row.names = FALSE,
+  file = here("Data/Processed/EPAair_O3_NC2024_processed.csv")
+)
 
+#O3.25
+write.csv(
+  O3.25.filt, 
+  row.names = FALSE,
+  file = here("Data/Processed/EPAair_O3_NC2025_processed.csv")
+)
+
+#PM25.24
+write.csv(
+  PM25.24.filt, 
+  row.names = FALSE,
+  file = here("Data/Processed/EPAair_PM25_NC2024_processed.csv")
+)
+
+#PM25.25
+write.csv(
+  PM25.25.filt, 
+  row.names = FALSE,
+  file = here("Data/Processed/EPAair_PM25_NC2025_processed.csv")
+)
 
 ```
 
@@ -117,7 +147,14 @@ identical first.
 
 ```{r question 7}
 #7 
+# check that column names are identical before binding
+colnames(O3.24.filt)
+colnames(O3.25.filt)
+colnames(PM25.24.filt)
+colnames(PM25.25.filt)
 
+# stack the datasets
+O3.PM25.2425 <- bind_rows(O3.24.filt,O3.25.filt, PM25.24.filt, PM25.25.filt)
 
 ```
 
@@ -145,7 +182,15 @@ following conditions:
 
 ```{r question 8}
 #8 
-
+# create a daily data frame
+daily.O3.PM25 <- O3.PM25.2425 %>% 
+  filter(Local.Site.Name %in% c("Linville Falls", "Durham Armory", "Leggett", "Hattie Avenue",  
+  "Clemmons Middle", "Mendenhall School", "Frying Pan Mountain", 
+  "West Johnston Co.", "Garinger High School", "Castle Hayne", 
+  "Pitt Agri. Center", "Bryson City", "Millbrook School")) %>%
+  group_by(Date, Local.Site.Name, AQS.Parameter.Description, County) %>% 
+  summarize(AQI.mean = mean(Daily.AQI.Value, na.rm = TRUE), lat.mean = mean(Site.Latitude, na.rm = TRUE), long.mean = mean(Site.Longitude, na.rm = TRUE)) %>%
+  mutate(Month = month(Date), Year = year(Date))
 
 ```
 
@@ -158,10 +203,15 @@ columns. Each location-date combination should occupy one row.
 
 ```{r questions 9-10}
 #9
-
+# use pivot wider to make ozone and pm 2.5 columns containing their respective AQI values
+daily.O3.PM25 <- daily.O3.PM25 %>% 
+  pivot_wider(
+    names_from = AQS.Parameter.Description,
+    values_from = AQI.mean
+  )
 
 #10
-
+dim(daily.O3.PM25) # 9037 rows and 9 columns 
 
 ```
 
@@ -171,7 +221,12 @@ columns. Each location-date combination should occupy one row.
 
 ```{r question 11}
 #11
-
+# saving processed dataset
+write.csv(
+  daily.O3.PM25, 
+  row.names = FALSE,
+  file = here("Data/Processed/EPAair_O3_PM25_NC2425_Processed.csv")
+)
 
 ```
 
@@ -188,10 +243,14 @@ missing. Mean PM2.5 may remain missing.
 
 ```{r questions 12 and 13}
 #12
-
+# creating a monthly summary data frame 
+monthly.O3.PM25 <- daily.O3.PM25 %>% 
+  group_by(Local.Site.Name, Month, Year) %>% 
+  summarize(O3.mean = mean(Ozone, na.rm = TRUE), PM25.mean = mean(PM2.5, na.rm = TRUE)) %>% 
+  drop_na(O3.mean)
 
 #13
-
+dim(monthly.O3.PM25) # 238 rows and 5 columns
 
 ```
 
@@ -200,4 +259,16 @@ missing. Mean PM2.5 may remain missing.
 14. Why is `drop_na(mean_ozone)` more appropriate here than `na.omit()`? Test
 both approaches and compare the dimensions of the resulting summary data frames.
 
-> Answer: 
+```{r question 14}
+#14
+# testing na.omit() to answer question 14
+monthly2.O3.PM25 <- daily.O3.PM25 %>% 
+  group_by(Local.Site.Name, Month, Year) %>% 
+  summarize(O3.mean = mean(Ozone, na.rm = TRUE), PM25.mean = mean(PM2.5, na.rm = TRUE)) %>% 
+  na.omit(O3.mean)
+
+dim(monthly2.O3.PM25) # 234 rows and 5 columns 
+```
+
+> Answer: na.omit() has removed the rows where PM2.5 had an NA as well as the rows where O3 had an NA, even though I only wanted to remove rows where O3 had an NA. na.omit() is less appropriate for specifying which columns I am interested in identifying NAs within and removing corresponding rows. 
+
