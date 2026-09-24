@@ -16,6 +16,8 @@ library(here)
 library(RColorBrewer)
 library(ggthemes)
 
+here()
+
 ```
 
 ## Import datasets
@@ -23,11 +25,11 @@ library(ggthemes)
 ```{r import-data, message = FALSE, warning = FALSE}
 PeterPaul.chem.nutrients <- read.csv(
   here("Data/Processed_KEY/NTL-LTER_Lake_Chemistry_Nutrients_PeterPaul_Processed.csv")
-  ) %>% ymd(sampledate)
+  ) %>% mutate(sampledate = ymd(sampledate))
 
 EPAair <- read.csv(
   here("Data/Processed_KEY/EPAair_O3_PM25_NC2425_Processed.csv")
-  ) %>% ymd(Date)
+  ) %>% mutate(Date = ymd(Date))
 
 Neonics <- Neonics <- read.table(
   here("Data/Raw/ECOTOX_Neonicotinoids_Insects_raw.txt"),
@@ -251,6 +253,17 @@ Use `PeterPaul.chem.nutrients` to plot surface-water temperature by day of year.
 ```{r exercise-1, fig.height = 4.5, fig.width = 7, warning = FALSE}
 # Build the plot here.
 
+temp_by_day <- PeterPaul.chem.nutrients %>%
+  filter(depth == 0, !is.na(temperature_C)) %>%
+ # mutate(year4 = asfactor(year4))
+  ggplot(aes(x = daynum, y = temperature_C, color = year4))+
+    geom_point(alpha = 0.5, size = 0.8) + #alpha for transparency
+    facet_wrap(vars(lakename), nrow=2)+
+  theme_minimal()
+
+temp_by_day
+  
+
 ```
 
 **Interpretation**
@@ -280,6 +293,20 @@ Plot temperature across the full sampling record and use color for depth.
 ```{r exercise-2, fig.height = 4.5, fig.width = 7, warning = FALSE}
 # Build the plot here.
 
+samp_depth <- PeterPaul.chem.nutrients %>%
+  filter(!is.na(depth)) %>% 
+  ggplot(aes(x=sampledate, y=temperature_C, color=depth))+
+    geom_point(apha=0.5, size = 0.5)+
+    facet_wrap(vars(lakename), nrow=2)+
+    scale_color_viridis_c(
+      option = "magma",
+      direction = -1,) +
+    scale_x_date(breaks="5 years", date_labels="%Y")+
+  theme_minimal()
+
+samp_depth
+  
+
 ```
 
 **Interpretation**
@@ -305,6 +332,15 @@ Use `EPAair` to examine the relationship between ozone and PM2.5 AQI values.
 
 ```{r exercise-3, fig.height = 4.5, fig.width = 6, warning = FALSE}
 # Build the plot here.
+oz_pm25 <- EPAair %>% 
+  ggplot(aes(x=AQI_Ozone, y=AQI_PM2.5, color=latitude))+
+  geom_point(alpha=0.5, size=0.9)+
+  geom_smooth(method="lm", se=FALSE)+
+  coord_cartesian(xlim=75)
+
+oz_pm25
+  
+
 
 ```
 
