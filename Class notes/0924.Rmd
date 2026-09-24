@@ -1,0 +1,36 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+---
+# Data Visualization
+
+*Plot choice follows the question!*
+One numeric variable -> distribution ->
+etc. see slides and presentation. 
+
+*Time: Points or Lines?*
+Using points show individual observations and gaps in sampling.
+Start with points, get to know the gaps etc. then do a line
+
+*Numeric values across categories*
+Which features of the distribution must remain visible for your question?
+
+*Overplotting can hide the data*
+Transparency, position, separation
+
+*Refining and communicating visualizations*
+axis labels, themes
+set-up r-code chunk now includes setting the theme in addition to loading the 
+library, loading the data set, parsing the date. 
+
+**Color should match the variable type**
+Make sure it's accessible: use linetype in addition to color, for example, 
+to help with color blind legibility.
+be thoughtful about the color scheme
+
+*Saving and combining figures*
+ggsave()
+cowplot -> align related panels, coordinate their sizes, retain only one shared
+legend
+
