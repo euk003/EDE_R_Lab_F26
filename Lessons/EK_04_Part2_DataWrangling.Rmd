@@ -18,6 +18,7 @@ editor_options:
 
 ```{r setup workspace, message = FALSE}
 library(tidyverse)
+library(here)
 
 NTL.phys.data.PeterPaul <- read.csv(
   here("Data/Processed/NTL-LTER_Lake_ChemistryPhysics_PeterPaul_Processed.csv")

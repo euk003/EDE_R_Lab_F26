@@ -26,6 +26,7 @@ Opening discussion: why might we be interested in long-term observations of temp
 
 ```{r setup workspace, message = FALSE}
 library(tidyverse)
+library(here)
 
 NTL.phys.data <- read.csv(
   here("Data/Raw/NTL-LTER_Lake_ChemistryPhysics_Raw.csv")
