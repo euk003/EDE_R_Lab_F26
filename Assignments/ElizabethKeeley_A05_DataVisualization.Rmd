@@ -1,6 +1,6 @@
 ---
 title: "Assignment 5: Data Visualization"
-author: "Student Name"
+author: "Elizabeth Keeley"
 output: pdf_document
 geometry: margin=2.54cm
 fig_height: 3
@@ -44,10 +44,22 @@ Niwot Ridge litter file (`NEON_NIWO_Litter_mass_trap_Processed.csv`) from the
 
 2. Make sure R is reading dates as date format; if not change the format to date.
 
-```{r initialize project}
+```{r initialize project, message=FALSE, warning=FALSE}
 #1 
+library(tidyverse)
+library(here)
+library(cowplot)
 
-#2 
+# read in processed data
+peterpaul <- read.csv(
+  here("Data/Processed_KEY/NTL-LTER_Lake_Chemistry_Nutrients_PeterPaul_Processed.csv")) 
+
+litter <- read.csv(
+  here("Data/Processed_KEY/NEON_NIWO_Litter_mass_trap_Processed.csv"))
+
+#2 correct dates to date format
+peterpaul$sampledate <- ymd(peterpaul$sampledate)
+litter$collectDate <- ymd(litter$collectDate)
 
 ```
 
@@ -66,7 +78,34 @@ Briefly identify the two or more elements you changed and explain how the
 changes improve readability.
 
 ```{r build plot theme}
-#3
+#3 come back to this!!!!
+
+keeley_theme <- theme_minimal(base_size = 12)  + 
+  theme(
+    #line =              element_line(),
+    #rect =              element_rect(),
+    #text =              element_text(),
+    
+    # Modified inheritance structure of text element
+    plot.title =        element_text(size = 14, face = "bold", hjust = 0.5),
+    plot.subtitle = element_text(size = 12, color = "darkgrey", hjust = 0.5),
+    #axis.title.x =      element_blank(),
+    #axis.title.y =      element_blank(),
+    #axis.text =         element_text(),
+    
+    # Modified inheritance structure of line element
+    #axis.ticks =        element_line(),
+    #panel.grid.major =  element_line(),
+    #panel.grid.minor =  element_blank(),
+    
+    # Modified inheritance structure of rect element
+    # plot.background =   element_rect(color = "lightgrey"))
+    #panel.background =  element_rect(),
+    #legend.key =        element_rect(),
+    
+    # Modifying legend.position
+    legend.position = "bottom"
+  )
 
 ```
 
@@ -88,6 +127,24 @@ descriptive title, axis labels with units, and a meaningful legend title.
 
 ```{r plot total P vs PO4}
 #4 
+
+PvP04 <- peterpaul %>% 
+  ggplot(aes(x=tp_ug, y=po4, color=lakename))+
+  geom_point(size=1, 
+             alpha = 0.3)+
+  geom_smooth(method="lm", 
+              se=FALSE, linewidth = 0.5, color = "darkgrey")+
+  facet_wrap(vars(lakename), nrow=2)+
+  labs(title = "Relationship between Total Phosphorous Concentration\n and Orthophosphate Concentration",
+       subtitle = "Peter and Paul Lakes",
+       x= "Total Phosphorus Concentration (µg P/L)",
+       y= "Orthophospate Concentration (µg P/L)")+
+  coord_cartesian(xlim = c(0, 150),
+                  ylim = c(0,45))+
+  scale_x_continuous(breaks = seq(0,150, by = 25))+
+  keeley_theme
+  
+PvP04      
 
 ```
 
