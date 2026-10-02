@@ -82,16 +82,12 @@ changes improve readability.
 
 keeley_theme <- theme_minimal(base_size = 12)  + 
   theme(
-    #line =              element_line(),
-    #rect =              element_rect(),
-    #text =              element_text(),
-    
     # Modified inheritance structure of text element
     plot.title =        element_text(size = 11, face = "bold", hjust = 0.5),
     plot.subtitle = element_text(size = 10, hjust = 0.5),
-    axis.title.x =      element_text(size = 11),
+    axis.title.x =      element_text(size = 10),
     axis.title.y =      element_text(size = 10),
-    axis.text =         element_text(size = 8),
+    axis.text =         element_text(size = 9),
     
     # Modified inheritance structure of line element
     #axis.ticks =        element_line(),
@@ -129,21 +125,21 @@ descriptive title, axis labels with units, and a meaningful legend title.
 #4 
 
 PvP04 <- peterpaul %>% 
-  ggplot(aes(x=tp_ug, y=po4, color=lakename))+
+  ggplot(aes(x=po4, y=tp_ug, color = lakename))+
   geom_point(size=1, 
              alpha = 0.5)+
+  scale_color_viridis_d(option = "plasma", end=0.5)+
   geom_smooth(method="lm", 
-              se=FALSE, linewidth = 0.5)+ #color = "darkgrey")+
-  #facet_wrap(vars(lakename), nrow=2)+
+              se=FALSE, linewidth = 0.3)+
+  facet_wrap(vars(lakename), nrow=2)+
   labs(title = "Relationship between Total Phosphorous Concentration
-       and Orthophosphate Concentration",
+       and Phosphate Concentration",
        subtitle = "Peter and Paul Lakes",
-       x= "Total Phosphorus Concentration (µg P/L)",
-       y= "Orthophospate Concentration (µg P/L)",
-       color= "")+
-  coord_cartesian(xlim = c(0, 75),#150),
-                  ylim = c(0,20))+
-  scale_x_continuous(breaks = seq(0,150, by = 25))+
+       y= "Total Phosphorus Concentration (µg P/L)",
+       x= "Phospate Concentration (µg P/L)",
+       color = "Lake Name")+
+  coord_cartesian(xlim = c(0, 45),#150),
+                 ylim = c(0,150))+
   keeley_theme
   
 PvP04      
@@ -156,6 +152,7 @@ extreme observations and explain why zooming with `coord_cartesian()` is
 preferable to removing them with scale limits.
 
 > Answer:
+There is a positive relationship between phosphate and total phosphorus in both lakes. The relationship, if using the line of best fit, does appear to differ between lakes. When looking at the trend of observations between 0 and 50 micrograms, the relationship does not appear hugely different. However, there is one observation in Paul Lake where the phosphate concentration is over 300 micrograms. This observation substantially impacts the line of best fit for the Paul Lake relationship. Zooming in with coord_cartesian() allows us to examine the trends in a way that is more visually accessible without excluding more extreme observations from the trendline analysis. We can decide to exclude that observation later, but it is useful to keep it until we decide the observation is an outlier that can be excluded. 
 
 
 5. [NTL-LTER] Make three separate boxplots of (a) temperature, (b) TP, and (c)
@@ -180,31 +177,41 @@ temp <- peterpaul %>%
   mutate(month = month(sampledate)) %>% 
   mutate(month = factor(month)) %>% 
   filter(month != 2) %>% 
-  ggplot(aes(x = month, y = temperature_C, color = lakename )) +
-  geom_boxplot(outlier.size=1, alpha = 0.5, linewidth=0.5) +
-  scale_color_manual(values = c(
-    "Paul Lake" = "darkblue",
-    "Peter Lake" = "darkorange"))+
+  ggplot(aes(x = month, 
+             y = temperature_C, 
+             color = lakename, 
+             pattern=lakename))+
+  geom_boxplot(outlier.size=0.6, 
+               alpha = 0.5, 
+               linewidth=0.5,
+               fatten=0.6) +
+  scale_color_viridis_d(option = "plasma", 
+                        end=0.5)+
   labs(title = "Temperature, Total Phosphorus, and Total Nitrogen",
        subtitle= "Medians and Quartiles by Month and Lake",
        y = "Temperature\n (C)")+
   keeley_theme+
   theme(axis.title.x = element_blank(),
         legend.position = "none")
-#temp
+temp
 
 # make boxplot for total phosophorus concentration
 TP <-  peterpaul %>% 
   mutate(month = month(sampledate)) %>% 
   mutate(month = factor(month)) %>%
   filter(month != 2) %>% 
-  ggplot(aes(x = month, y = tp_ug, color = lakename)) +
-  geom_boxplot(size =0.5, outlier.size=1, alpha = 0.5, linewidth=0.5) +
-  scale_color_manual(values = c(
-    "Paul Lake" = "darkblue",
-    "Peter Lake" = "darkorange"))+
+  ggplot(aes(x = month, 
+             y = tp_ug, 
+             color = lakename)) +
+  geom_boxplot(size =0.5, 
+               outlier.size=0.6, 
+               alpha = 0.5, 
+               linewidth=0.5, 
+               fatten=0.6) +
+  scale_color_viridis_d(option = "plasma", 
+                        end=0.5)+
   labs(y = "Total Phosphorus\n Concentration\n (µg P/L)")+
-  coord_cartesian(ylim = c(0,75))+
+  coord_cartesian(ylim = c(0,50))+
   keeley_theme+
   theme(axis.title.x = element_blank(),
         legend.position = "none")
@@ -215,21 +222,23 @@ TN <-  peterpaul %>%
   mutate(month = month(sampledate)) %>% 
   mutate(month = factor(month)) %>% 
   filter(month != 2) %>% 
-  ggplot(aes(x = month, y = tn_ug, color = lakename)) +
-  geom_boxplot(outlier.size=1, alpha = 0.5, linewidth=0.5
-               ) +
-  scale_color_manual(values = c(
-    "Paul Lake" = "darkblue",
-    "Peter Lake" = "darkorange"))+
+  ggplot(aes(x = month, 
+             y = tn_ug, 
+             color = lakename)) +
+  geom_boxplot(outlier.size=0.6, 
+               alpha = 0.5, 
+               linewidth=0.5,
+               fatten=0.6) +
+  scale_color_viridis_d(option = "plasma", end=0.5)+
   labs(y= "Total Nitrogen\n Concentration\n (µg P/L)", x = "Month")+
-  coord_cartesian(ylim = c(0,1250))+
+  coord_cartesian(ylim = c(0,900))+
   keeley_theme+
   theme(legend.title = element_blank(), legend = element_blank())
 
 TN
 
 # use cowplot to facet these figures
-tempTNTP <- plot_grid(temp, TP, TN, ncol = 1, align = 'v', rel_heights = c(4,2.5,5))
+tempTNTP <- plot_grid(temp, TP, TN, ncol = 1, align = 'v', rel_heights = c(1, 0.8, 1.3))
 tempTNTP
 
 # second try for a more legible grouped figure
@@ -278,7 +287,7 @@ drymass_faceted <- litter %>%
   ggplot(aes(x=collectDate, y=dryMass))+
   geom_point(size = 1.5,alpha=0.5)+
   facet_wrap(vars(nlcdClass), nrow=3) +
-  scale_color_viridis_d("NLCD Class")+
+  #scale_color_viridis_d("NLCD Class")+
   labs(title = "Needle Litter Dry Mass by Date and NLCD Class",
        x = "Collection Date", 
        y= "Dry Mass (g)")+
