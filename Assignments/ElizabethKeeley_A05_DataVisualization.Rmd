@@ -87,11 +87,11 @@ keeley_theme <- theme_minimal(base_size = 12)  +
     #text =              element_text(),
     
     # Modified inheritance structure of text element
-    plot.title =        element_text(size = 14, face = "bold", hjust = 0.5),
-    plot.subtitle = element_text(size = 12, color = "darkgrey", hjust = 0.5),
+    plot.title =        element_text(size = 11, face = "bold", hjust = 0.5),
+    plot.subtitle = element_text(size = 10, hjust = 0.5),
     #axis.title.x =      element_blank(),
-    #axis.title.y =      element_blank(),
-    #axis.text =         element_text(),
+    axis.title.y =      element_text(size = 10),
+    axis.text =         element_text(size = 8),
     
     # Modified inheritance structure of line element
     #axis.ticks =        element_line(),
@@ -125,22 +125,24 @@ pattern is visible without deleting the extreme observations from the analysis
 (hint: use `coord_cartesian()` rather than `xlim()` or `ylim()`). Include a
 descriptive title, axis labels with units, and a meaningful legend title.
 
-```{r plot total P vs PO4}
+```{r plot total P vs PO4, }
 #4 
 
 PvP04 <- peterpaul %>% 
   ggplot(aes(x=tp_ug, y=po4, color=lakename))+
   geom_point(size=1, 
-             alpha = 0.3)+
+             alpha = 0.5)+
   geom_smooth(method="lm", 
-              se=FALSE, linewidth = 0.5, color = "darkgrey")+
-  facet_wrap(vars(lakename), nrow=2)+
-  labs(title = "Relationship between Total Phosphorous Concentration\n and Orthophosphate Concentration",
+              se=FALSE, linewidth = 0.5)+ #color = "darkgrey")+
+  #facet_wrap(vars(lakename), nrow=2)+
+  labs(title = "Relationship between Total Phosphorous Concentration
+       and Orthophosphate Concentration",
        subtitle = "Peter and Paul Lakes",
        x= "Total Phosphorus Concentration (µg P/L)",
-       y= "Orthophospate Concentration (µg P/L)")+
-  coord_cartesian(xlim = c(0, 150),
-                  ylim = c(0,45))+
+       y= "Orthophospate Concentration (µg P/L)",
+       color= "")+
+  coord_cartesian(xlim = c(0, 75),#150),
+                  ylim = c(0,20))+
   scale_x_continuous(breaks = seq(0,150, by = 25))+
   keeley_theme
   
@@ -172,6 +174,67 @@ to factor to order it.
 
 ```{r Create boxplots}
 #5 
+# make boxplot for temp
+
+temp <- peterpaul %>% 
+  mutate(month = month(sampledate)) %>% 
+  mutate(month = factor(month)) %>% 
+  filter(month != 2) %>% 
+  ggplot(aes(x = month, y = temperature_C, color = lakename )) +
+  geom_boxplot(outlier.size=1, alpha = 0.5, linewidth=0.5) +
+  scale_color_manual(values = c(
+    "Paul Lake" = "darkblue",
+    "Peter Lake" = "darkorange"))+
+  labs(title = "Temperature, Total Phosphorus, and Total Nitrogen",
+       subtitle= "Medians and Quartiles by Month and Lake",
+       y = "Temperature (C)")+
+  keeley_theme+
+  theme(axis.title.x = element_blank(),
+        legend.position = "none")
+#temp
+
+# make boxplot for total phosophorus concentration
+TP <-  peterpaul %>% 
+  mutate(month = month(sampledate)) %>% 
+  mutate(month = factor(month)) %>%
+  filter(month != 2) %>% 
+  ggplot(aes(x = month, y = tp_ug, color = lakename)) +
+  geom_boxplot(outlier.size=1, alpha = 0.5, linewidth=0.5) +
+  scale_color_manual(values = c(
+    "Paul Lake" = "darkblue",
+    "Peter Lake" = "darkorange"))+
+  labs(y = "Total Phosphorus\n Concentration\n (µg P/L)")+
+  coord_cartesian(ylim = c(0,75))+
+  keeley_theme+
+  theme(axis.title.x = element_blank(),
+        legend.position = "none")
+TP
+
+# make boxplot for total nitrogen concentration
+TN <-  peterpaul %>% 
+  mutate(month = month(sampledate)) %>% 
+  mutate(month = factor(month)) %>% 
+  filter(month != 2) %>% 
+  ggplot(aes(x = month, y = tn_ug, color = lakename)) +
+  geom_boxplot(outlier.size=1, alpha = 0.5, linewidth=0.5
+               ) +
+  scale_color_manual(values = c(
+    "Paul Lake" = "darkblue",
+    "Peter Lake" = "darkorange"))+
+  labs(y= "Total Nitrogen\n Concentration\n (µg P/L)", x = "Month")+
+  coord_cartesian(ylim = c(0,1250))+
+  keeley_theme+
+  theme(legend.title = element_blank(), legend = element_blank())
+
+TN
+
+# use cowplot to facet these figures
+tempTNTP <- plot_grid(temp, TP, TN, ncol = 1, align = 'v', rel_heights = c(4,2.5,5))
+tempTNTP
+
+# second try for a more legible grouped figure
+#tempTNTP2 <- plot_grid(temp, TP, TN, nrow = 1, align = 'h')
+#tempTNTP2
 
 ```
 
