@@ -89,7 +89,7 @@ keeley_theme <- theme_minimal(base_size = 12)  +
     # Modified inheritance structure of text element
     plot.title =        element_text(size = 11, face = "bold", hjust = 0.5),
     plot.subtitle = element_text(size = 10, hjust = 0.5),
-    #axis.title.x =      element_blank(),
+    axis.title.x =      element_text(size = 11),
     axis.title.y =      element_text(size = 10),
     axis.text =         element_text(size = 8),
     
@@ -187,7 +187,7 @@ temp <- peterpaul %>%
     "Peter Lake" = "darkorange"))+
   labs(title = "Temperature, Total Phosphorus, and Total Nitrogen",
        subtitle= "Medians and Quartiles by Month and Lake",
-       y = "Temperature (C)")+
+       y = "Temperature\n (C)")+
   keeley_theme+
   theme(axis.title.x = element_blank(),
         legend.position = "none")
@@ -199,7 +199,7 @@ TP <-  peterpaul %>%
   mutate(month = factor(month)) %>%
   filter(month != 2) %>% 
   ggplot(aes(x = month, y = tp_ug, color = lakename)) +
-  geom_boxplot(outlier.size=1, alpha = 0.5, linewidth=0.5) +
+  geom_boxplot(size =0.5, outlier.size=1, alpha = 0.5, linewidth=0.5) +
   scale_color_manual(values = c(
     "Paul Lake" = "darkblue",
     "Peter Lake" = "darkorange"))+
@@ -258,9 +258,34 @@ the effect of faceting itself.
 ```{r Plot litter}
 #6
 
+drymass <- litter %>% 
+  filter(functionalGroup == "Needles") %>% 
+  ggplot(aes(x=collectDate, y=dryMass, color=nlcdClass))+
+  geom_point(size = 1.5,alpha=0.5)+
+  scale_color_viridis_d("NLCD Class")+
+  labs(title = "Needle Litter Dry Mass by Date and NLCD Class",
+       x = "Collection Date", 
+       y= "Dry Mass (g)")+
+  keeley_theme+
+  theme(legend.position = "bottom")
+
+drymass
 
 #7
 
+drymass_faceted <- litter %>% 
+  filter(functionalGroup == "Needles") %>% 
+  ggplot(aes(x=collectDate, y=dryMass))+
+  geom_point(size = 1.5,alpha=0.5)+
+  facet_wrap(vars(nlcdClass), nrow=3) +
+  scale_color_viridis_d("NLCD Class")+
+  labs(title = "Needle Litter Dry Mass by Date and NLCD Class",
+       x = "Collection Date", 
+       y= "Dry Mass (g)")+
+  keeley_theme+
+  theme(legend.position = "bottom")
+
+drymass_faceted
 
 ```
 
@@ -270,15 +295,47 @@ the effect of faceting itself.
 
 Paste the exact prompt you used below:
 
-> AI tool used:
+> AI tool used: Google AI
 
-> AI prompt:
+> AI prompt: Suggest code for the following prompt: 
+"Plot dry mass of needle litter by date with the three NLCD classes separated into facets. You do not need to rename the land-use classes. Format the date axis, labels, legend, point size, and transparency so that overlapping observations remain visible." 
+The data frame is called litter.  There are multiple functional groups. Please select for Needle litter only. 
+functional groups: functionalGroup 
+NLCD classes : nlcdClass  
+dry mass : dryMass  
+date : collectDate
 
 Run and inspect the AI-generated code, correcting only errors required to make
 it run. If you make corrections, identify them. Then compare the two solutions.
 
 ```{r AI solution}
 # Paste the AI-generated code here. Clearly comment any corrections you make.
+
+library(ggplot2)
+library(scales)
+
+# Filter for Needle litter and create the plot
+litter_filtered <- subset(litter, functionalGroup == "Needles") #the AI had functionalGroup as "Needle Litter" so I changed that to "Needles"
+
+ggplot(litter_filtered, aes(x = as.Date(collectDate), y = dryMass)) +
+  # Alpha handles transparency; size makes points manageable for overlapping data
+  geom_point(alpha = 0.5, size = 1.5, color = "darkgreen") +
+  # Separate into facets based on NLCD classes
+  facet_wrap(~ nlcdClass, ncol = 3) +
+  # Format the date axis cleanly
+  scale_x_date(date_breaks = "3 months", date_labels = "%b %Y") +
+  # Add clear labels and formatting
+  labs(
+    title = "Dry Mass of Needle Litter over Time by NLCD Class",
+    x = "Collection Date",
+    y = "Dry Mass (g)"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1), # Rotates date labels to prevent overlap
+    panel.spacing = unit(1, "lines"),
+    strip.text = element_text(face = "bold", size = 11)
+  )
 
 ```
 
