@@ -128,8 +128,8 @@ url=paste0(
   "limit=50000&",
   "properties=time,parameter_code,value,unit_of_measure,approval_status,qualifier&",
   #"time_series_id=438fae403f374eb680a050a9c3a67148&",
-  "monitoring_location_id=USGS-02087500&",
-  "time=P7D&",
+  "monitoring_location_id=USGS-02085070&",
+  "time=P24D&",
   "f=csv")
 
 #Read the URL
@@ -168,17 +168,17 @@ More info: <https://doi-usgs.github.io/dataRetrieval/>
 
 ```{r using.the.dataRetrieval.package}
 #Identify gauge to download
-siteNo <- 'USGS-02087500' 
+siteNo <- "USGS-02087500"
 siteNos <- c('USGS-02087500','USGS-02085070')
 
 #Identify parameter of interest: 
-pcode = '00060' #discharge (cfs)
+pcode = "00060" #discharge (cfs)
 
 #Load in the data using the package's "read_waterdata_continuous" function
 neuse <- read_waterdata_continuous(
   monitoring_location_id = siteNo,
   parameter_code = pcode,
-  time = 'P7D',
+  time = "P7D"
 )
 
 #Plot
@@ -198,7 +198,7 @@ You'll also need to look up the IDs of the variables you want to extract. Those 
 
 ```{r}
 #Apply the API key
-#census_api_key("d4ad7874c996c7a83fec0a81466309ddc07d8e22a", install = TRUE)
+#census_api_key("903e5b6d0fbe9a54120fdb4955108a79d35c887f", install = TRUE)
 
 nc_pop <- 
   get_acs(geography = "county",
@@ -240,16 +240,25 @@ The RVest scraping workflow is as follows:
 
 ```{r EXERCISE - scrape.data.manually eval=FALSE}
 #1 Link to the web site using read_html
-the_website <- 
+the_website <- read_html("https://www.eia.gov/electricity/state") 
+ # html_nodes('td , .basic-table a') %>% 
+  # html_text()
+
+the_website
 
 #2&3 Locate elements and read their text attributes into variables
-the_states <- 
-the_price <- 
-the_capacity <- 
-net_generation <- 
-total_retail <- 
+the_states <- the_website %>% html_nodes('.basic-table a') %>% html_text()
+the_price <- the_website %>% html_nodes('td:nth-child(2)')%>% html_text()
+the_capacity <- the_website %>% html_nodes('td:nth-child(3)')%>% html_text()
+net_generation <- the_website %>% html_nodes('td:nth-child(4)')%>% html_text()
+total_retail <- the_website %>% html_nodes('td:nth-child(5)')%>% html_text()
   
 #3 Construct a dataframe from the values
+df_electric <- data.frame("State" = the_states,
+                          "Price" = as.numeric(the_price),
+                          "Capacity" = as.numeric(gsub(",","",the_capacity)),
+                          "Net_Generation" = as.numeric(gsub(",","",net_generation)),
+                          "Total_Retail" = as.numeric(gsub(",","",total_retail)
 
 ```
 
@@ -277,7 +286,7 @@ scrape.it <- function(the_year){
 }
 
 # Use the above function to scrape data for 2017
-
+scrape.it(2024)
 
 # Map the function to scrape data from 2021 to 2023
 
