@@ -1,6 +1,6 @@
 ---
 title: "Assignment 6: Data Scraping"
-author: "Student Name"
+author: "Elizabeth Keeley"
 output: pdf_document
 editor_options: 
   chunk_output_type: console
@@ -26,20 +26,49 @@ This exercise accompanies the lessons in Environmental Data Analytics on data sc
 * Check your working directory
 
 ```{r 1. Project Setup, message = FALSE}
-#1 
+#1 Loading packages and checking working directory
+library(tidyverse)
+library(rvest)
+library(here)
+library(lubridate)
+library(dplyr)
+here()
 
+#setting theme for plots
+keeley_theme <- theme_minimal(base_size = 12)  + 
+  theme(
+    # Modified inheritance structure of text element
+    plot.title =        element_text(#size = 14,
+                                     face = "bold", 
+                                     hjust = 0.5),
+    plot.subtitle = element_text(#size = 13, 
+                                 hjust = 0.5),
+    axis.title.x =      element_text(size = 12),
+    axis.title.y =      element_text(size = 12),
+    axis.text =         element_text(size = 11),
+    
+    # Modified inheritance structure of rect element
+    panel.background =  element_rect(color = "grey"),
+    legend.background =        element_rect(color = "grey"),
+    
+    # Modifying legend.position
+    legend.position = "bottom"
+  )
 
+theme_set(keeley_theme)
 ```
 
 2. We will be scraping data from the NC DEQs Local Water Supply Planning website, specifically the Durham's 2024 Municipal Local Water Supply Plan (LWSP): 
  * Navigate to https://www.ncwater.org/WUDC/app/LWSP/search.php
  * Scroll down and select the LWSP link next to Durham Municipality. 
  * Note the web address: <https://www.ncwater.org/WUDC/app/LWSP/report.php?pwsid=03-32-010&year=2024>
+ https://www.ncwater.org/WUDC/app/LWSP/report.php?pwsid=03-32-010&year=2025
  
 Indicate this website as the as the URL to be scraped. (In other words, read the contents into an `rvest` webpage object.)
 
 ```{r set.the.scraping.website}
 #2 
+webpage <- read_html("https://www.ncwater.org/WUDC/app/LWSP/report.php?pwsid=03-32-010&year=2025") 
 
 ```
 
@@ -60,6 +89,21 @@ In the code chunk below scrape these values, assigning them to four separate var
 ```{r scrape.the.data}
 #3 
 
+system_name <- webpage %>% 
+  html_nodes("div+ table tr:nth-child(1) td:nth-child(2)") %>% 
+  html_text()
+
+pwsid <- webpage %>% 
+  html_nodes("td tr:nth-child(1) td:nth-child(5)") %>% 
+  html_text()
+
+ownership <- webpage %>% 
+  html_nodes("div+ table tr:nth-child(2) td:nth-child(4)") %>% 
+  html_text()
+
+max_day_use <- webpage %>% 
+  html_nodes("th~ td+ td") %>% 
+  html_text()
 
 ```
 
@@ -75,9 +119,29 @@ In the code chunk below scrape these values, assigning them to four separate var
 ```{r create.a.dataframe.from.scraped.data}
 #4 
 
+df_wateruse <- data.frame(
+  "Month" = c(1, 5, 9, 2, 6, 10, 3, 7, 11, 4, 8, 12),
+  "Year" = 2025,
+  "System_Name" = system_name,
+  "Ownership" = ownership, 
+  "PWSID" = pwsid,
+  "Maximum_Day_Use" = as.numeric(max_day_use)) %>% 
+    mutate("Date" = my(paste(Month,"/",Year))
+)
 
 #5 
 
+wateruse <- df_wateruse %>% 
+  ggplot(aes(x=(Month), y=Maximum_Day_Use, group=1))+
+  geom_line()+
+  scale_x_continuous(breaks=1:12,
+                    labels=month.abb)+
+  labs(title = "Maximum Daily Withdrawal of Water",
+       subtitle= "Durham, 2025",
+       x = "Month", 
+       y = "Maximum Daily Use (MGD)")
+
+wateruse
 
 ```
 
@@ -91,6 +155,30 @@ In the code chunk below scrape these values, assigning them to four separate var
 ```{r construct.a.scraping.function}
 #6. 
 
+scrape_func <- function(the_pwsid, the_year){
+  #Get the proper url
+  the_url <- read_html(paste0('https://www.ncwater.org/WUDC/app/LWSP/report.php?', 
+                                  'pwsid=',the_pwsid,"&year=",the_year))
+  
+  # scrape data 
+  system_name <- the_url %>% html_nodes("div+ table tr:nth-child(1) td:nth-child(2)") %>% html_text()
+  ownership <- the_url %>% html_nodes("div+ table tr:nth-child(2) td:nth-child(4)") %>% html_text()
+  max_day_use <- the_url %>% html_nodes("th~ td+ td") %>% html_text()
+  
+  # create data frame
+  df_wateruse2 <- data.frame(
+  "Month" = c(1, 5, 9, 2, 6, 10, 3, 7, 11, 4, 8, 12),
+  "Year" = rep(the_year,12), 
+  "System_Name" = system_name,
+  "Ownership" = ownership, 
+  "PWSID" = the_pwsid,
+  "Maximum_Day_Use" = as.numeric(max_day_use)) %>% 
+  mutate("Date" = my(paste(Month,"/",Year))) #is it okay that it autofills first of the month??? CHECK THIS
+  
+  #return data frame
+  return(df_wateruse2)
+}
+
 
 ```
 
@@ -99,15 +187,48 @@ In the code chunk below scrape these values, assigning them to four separate var
 ```{r fetch.and.plot.Durham.2020.data}
 #7 
 
+durham_max_withd <- scrape_func("03-32-010", 2020) 
+
+plot_dur_withd <- durham_max_withd %>% 
+  ggplot(aes(x=(Month), y=Maximum_Day_Use, group=1))+
+  geom_line()+
+  scale_x_continuous(breaks=1:12,
+                    labels=month.abb)+
+  labs(title = "Maximum Daily Withdrawal of Water",
+       subtitle= paste("Durham,",durham_max_withd$Year),
+       x = "Month", 
+       y = "Maximum Daily Use (MGD)")
+
+plot_dur_withd
+
+glimpse(durham_max_withd)
 
 ```
 
-8. Use the function above to extract data for Cary (PWSID = '03-32-010') in 2020. Combine this data with the Durham data collected above and create a plot that compares Cary's to Durham's water withdrawals.
+8. Use the function above to extract data for Cary (PWSID = '03-92-020') in 2020. Combine this data with the Durham data collected above and create a plot that compares Cary's to Durham's water withdrawals.
 
 ```{r fetch.and.plot.Cary.2020.data}
 #8 
 
+cary_maxwithd <- scrape_func('03-92-020', 2020)
 
+max_withd <- bind_rows(cary_maxwithd, durham_max_withd)
+
+plot_withd_comp <- max_withd %>% 
+  ggplot(aes(x=(Month), y=Maximum_Day_Use, color = System_Name, linetype= System_Name))+
+  geom_line(linewidth = 0.7)+
+  scale_x_continuous(breaks=1:12,
+                    labels=month.abb)+
+  labs(title = "Maximum Daily Withdrawal of Water",
+       subtitle= paste("Durham and Cary,",max_withd$Year),
+       x = "Month", 
+       y = "Maximum Daily Use (MGD)",
+       color = "System Name",
+       linetype = "System Name")+
+   scale_color_viridis_d(option = "plasma", 
+                        end=0.5)
+
+plot_withd_comp
 ```
 
 
