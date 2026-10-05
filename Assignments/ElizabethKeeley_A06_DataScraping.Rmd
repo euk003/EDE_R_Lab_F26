@@ -68,7 +68,8 @@ Indicate this website as the as the URL to be scraped. (In other words, read the
 
 ```{r set.the.scraping.website}
 #2 
-webpage <- read_html("https://www.ncwater.org/WUDC/app/LWSP/report.php?pwsid=03-32-010&year=2025") 
+webpage <- 
+  read_html("https://www.ncwater.org/WUDC/app/LWSP/report.php?pwsid=03-32-010&year=2025") 
 
 ```
 
@@ -87,7 +88,7 @@ In the code chunk below scrape these values, assigning them to four separate var
 >HINT: The first value should be "Durham", the second "03-32-010", the third "Municipality", and the last should be a vector of 12 numeric values (represented as strings)".
 
 ```{r scrape.the.data}
-#3 
+#3 Assign values to be scraped to variables
 
 system_name <- webpage %>% 
   html_nodes("div+ table tr:nth-child(1) td:nth-child(2)") %>% 
@@ -117,7 +118,7 @@ max_day_use <- webpage %>%
 5. Create a line plot of the maximum daily withdrawals across the months for 2024, making sure, the months are presented in proper sequence.
 
 ```{r create.a.dataframe.from.scraped.data}
-#4 
+#4 Create a data frame from scraoed data
 
 df_wateruse <- data.frame(
   "Month" = c(1, 5, 9, 2, 6, 10, 3, 7, 11, 4, 8, 12),
@@ -129,7 +130,7 @@ df_wateruse <- data.frame(
     mutate("Date" = my(paste(Month,"/",Year))
 )
 
-#5 
+#5  Plot the data in the above dataframe
 
 wateruse <- df_wateruse %>% 
   ggplot(aes(x=(Month), y=Maximum_Day_Use, group=1))+
@@ -153,17 +154,26 @@ wateruse
 
 
 ```{r construct.a.scraping.function}
-#6. 
+#6. Create a scraping function
 
 scrape_func <- function(the_pwsid, the_year){
   #Get the proper url
-  the_url <- read_html(paste0('https://www.ncwater.org/WUDC/app/LWSP/report.php?', 
+  the_url <- 
+    read_html(paste0('https://www.ncwater.org/WUDC/app/LWSP/report.php?', 
                                   'pwsid=',the_pwsid,"&year=",the_year))
   
   # scrape data 
-  system_name <- the_url %>% html_nodes("div+ table tr:nth-child(1) td:nth-child(2)") %>% html_text()
-  ownership <- the_url %>% html_nodes("div+ table tr:nth-child(2) td:nth-child(4)") %>% html_text()
-  max_day_use <- the_url %>% html_nodes("th~ td+ td") %>% html_text()
+  system_name <- the_url %>% 
+    html_nodes("div+ table tr:nth-child(1) td:nth-child(2)") %>% 
+    html_text()
+  
+  ownership <- the_url %>% 
+    html_nodes("div+ table tr:nth-child(2) td:nth-child(4)") %>% 
+    html_text()
+  
+  max_day_use <- the_url %>% 
+    html_nodes("th~ td+ td") %>% 
+    html_text()
   
   # create data frame
   df_wateruse2 <- data.frame(
@@ -173,7 +183,7 @@ scrape_func <- function(the_pwsid, the_year){
   "Ownership" = ownership, 
   "PWSID" = the_pwsid,
   "Maximum_Day_Use" = as.numeric(max_day_use)) %>% 
-  mutate("Date" = my(paste(Month,"/",Year))) #is it okay that it autofills first of the month??? CHECK THIS
+  mutate("Date" = my(paste(Month,"/",Year)))
   
   #return data frame
   return(df_wateruse2)
@@ -185,7 +195,7 @@ scrape_func <- function(the_pwsid, the_year){
 7. Use the function above to extract and plot max daily withdrawals for Durham (PWSID='03-32-010') for each month in 2020. Then show the structure of the dataframe with either the `str()` or the `glimpse()` function. 
 
 ```{r fetch.and.plot.Durham.2020.data}
-#7 
+#7 Use scraping function to extract and then plot withdrawals
 
 durham_max_withd <- scrape_func("03-32-010", 2020) 
 
@@ -208,14 +218,18 @@ glimpse(durham_max_withd)
 8. Use the function above to extract data for Cary (PWSID = '03-92-020') in 2020. Combine this data with the Durham data collected above and create a plot that compares Cary's to Durham's water withdrawals.
 
 ```{r fetch.and.plot.Cary.2020.data}
-#8 
+#8 Use scraping function to extract and plot Cary and Durham data from 2020
 
 cary_maxwithd <- scrape_func('03-92-020', 2020)
 
-max_withd <- bind_rows(cary_maxwithd, durham_max_withd)
+max_withd <- bind_rows(cary_maxwithd, 
+                       durham_max_withd)
 
 plot_withd_comp <- max_withd %>% 
-  ggplot(aes(x=(Month), y=Maximum_Day_Use, color = System_Name, linetype= System_Name))+
+  ggplot(aes(x=(Month), 
+             y=Maximum_Day_Use, 
+             color = System_Name, 
+             linetype= System_Name))+
   geom_line(linewidth = 0.7)+
   scale_x_continuous(breaks=1:12,
                     labels=month.abb)+
@@ -232,16 +246,48 @@ plot_withd_comp
 ```
 
 
-9. Use the code & function you created above to plot Cary's max daily withdrawal by months for the years 2018 thru 2023.Add a smoothed line to the plot (method = 'loess').
+9. Use the code & function you created above to plot Cary's max daily withdrawal by months for the years 2018 thru 2023. Add a smoothed line to the plot (method = 'loess').
 
 > TIP: See Section 3.2 in the "10_Data_Scraping.Rmd" where we apply "map2()" to iteratively run a function over two inputs. Pipe the output of the map2() function to `bind_rows()` to combine the dataframes into a single one, and use that to construct your plot.
 
 ```{r fetch.and.plot.Cary.multiyear.data }
-#9 
+#9 Use scraping function to extract and plot Cary data from 2018-2023
 
+#set the years to scrape for
+cary_years = rep(2018:2023)
+
+# create a list of the same length as cary_years of the cary pwsid
+cary_pwsid = rep('03-92-020', 
+                 length(cary_years))
+
+
+# use scraping function to pull data for all the years and bind_rows
+df_caryyears <- map2(cary_pwsid, 
+                     cary_years, 
+                     scrape_func) %>% 
+  bind_rows()
+
+# plot Cary's max withdrawal by month for 2018 - 2023
+plot_caryyears <- df_caryyears %>% 
+  ggplot(aes(x=Date, y=Maximum_Day_Use))+
+         #, color = as.factor(Year), group = Year))+
+  geom_line(linewidth = 0.7)+
+  geom_smooth(method="loess",se=FALSE, linewidth = 0.7)+
+  scale_x_date(date_labels = paste0("%b"," '","%y"),
+               date_breaks= "2 month")+
+  labs(title = "Maximum Daily Withdrawal of Water",
+       subtitle= paste("Cary, 2018 - 2023"),
+       x = "Month and Year", 
+       y = "Maximum Daily Use (MGD)")+
+  theme(axis.text.x = element_text(angle = 70,
+                                   hjust = 1, 
+                                   size =8))
+# scale_color_viridis_d()
+
+plot_caryyears
 
 ```
 
 Question: Just by looking at the plot (i.e. not running statistics), does Cary have a trend in water usage over time?
-> Answer:
+> Answer: Cary does appear to have a trend in water usage over time. The trend line shows an increase in water usage from about 23MGD from 2018-2020 to about 24MGD from 2021-2023. 
 >
